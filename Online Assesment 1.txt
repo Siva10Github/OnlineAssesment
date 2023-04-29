@@ -1,0 +1,44 @@
+def probability_of_missing_graduation(n):
+    def count_ways(n, days_missed, dp):
+        if n == 0:
+            return 1
+        if dp[n][days_missed] != -1:
+            return dp[n][days_missed]
+
+        # Attended classes
+        attend = count_ways(n-1, 0, dp)
+
+        # Missed classes
+        miss = 0
+        if days_missed < 3:
+            miss = count_ways(n-1, days_missed + 1, dp)
+
+        dp[n][days_missed] = attend + miss
+        return dp[n][days_missed]
+
+    def count_total_ways(n, dp_total):
+        if n == 0:
+            return 1
+        if dp_total[n] != -1:
+            return dp_total[n]
+
+        # Attended class
+        attend = count_total_ways(n-1, dp_total)
+
+        # Missed class
+        miss = count_total_ways(n-1, dp_total)
+
+        dp_total[n] = attend + miss
+        return dp_total[n]
+
+    dp = [[-1 for i in range(4)] for i in range(n + 1)]
+    ways_to_attend = count_ways(n, 0, dp)
+
+    dp_total = [-1 for i in range(n + 1)]
+    total_ways = count_total_ways(n - 1, dp_total)  # Subtract one day for the graduation day
+
+    ways_to_miss_graduation = total_ways - ways_to_attend
+    return f"{ways_to_miss_graduation}/{total_ways}"
+    
+print(probability_of_missing_graduation(5))  
+print(probability_of_missing_graduation(10))
